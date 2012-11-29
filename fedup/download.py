@@ -355,7 +355,10 @@ def modify_bootloader(kernel, initrd):
                          title=_("System Upgrade"),
                          args=" ".join(args))
 
-    # FIXME: use grub2-reboot to change to new bootloader config
+    # Tell bootloader to use our new entry at next boot
+    for e in bootloader.get_entries():
+        if e.kernel == kernel:
+            bootloader.set_next_boot(e.index)
 
 def prep_boot(kernel, initrd):
     # all we need to do currently is set up the boot args
