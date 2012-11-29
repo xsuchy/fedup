@@ -128,3 +128,8 @@ class Grubby(object):
         index = int(index) # make sure index is int
         self._grubby("--remove-kernel", index)
 
+    def set_next_boot(self, index):
+        '''Boot the given grubby entry (just once) on the next boot.'''
+        # XXX grubby could do this. Then it'd work for non-GRUB2 systems.
+        #     someone oughtta write a patch...
+        check_output(["grub2-reboot", str(index)], stderr=STDOUT)
