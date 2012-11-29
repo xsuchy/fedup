@@ -17,24 +17,32 @@
 #
 # Author: Will Woods <wwoods@redhat.com>
 
-from subprocess import check_output, CalledProcessError, PIPE
+from subprocess import check_output, CalledProcessError, STDOUT
 from collections import namedtuple
 
 GrubbyEntry = namedtuple("GrubbyEntry", "index kernel args root initrd title")
 
 class Grubby(object):
-    '''View/manipulate bootloader configuration using `grubby`.'''
+    '''
+    View/manipulate bootloader configuration using `grubby`.
+    'config' is the config file to modify (or None to let grubby autodetect).
+    'bootloader' defines the bootloader type (or None for autodetect).
 
+    Raises CalledProcessError if grubby fails.
+    Check the output, cmd, and returncode attributes for more info.
+
+    NOTE: on most systems the bootloader config is only readable by root,
+          so most of this won't work unless you're root.
+    '''
     bootloaders = ("grub", "grub2", "elilo", "extlinux",
                    "lilo", "silo", "yaboot", "zipl")
 
     def __init__(self, config=None, bootloader=None):
-        self.config = config
-        self.bootloader = bootloader
-
         if bootloader and bootloader not in self.bootloaders:
             raise ValueError("bootloader must be one of: %s" % \
                                 " ".join(self.bootloaders))
+        self.config = config
+        self.bootloader = bootloader
 
     def _grubby(self, *args):
         cmd = ["grubby"]
@@ -42,7 +50,7 @@ class Grubby(object):
             cmd += ["--%s" % bootloader]
         if self.config:
             cmd += ["--config-file", config]
-        return check_output(cmd + [str(a) for a in args], stderr=PIPE)
+        return check_output(cmd + [str(a) for a in args], stderr=STDOUT)
 
     def get_entry(self, index):
         '''Returns a GrubbyEntry for the entry at the given index,
