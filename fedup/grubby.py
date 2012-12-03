@@ -60,7 +60,7 @@ class Grubby(object):
         if index < 0:
             return None
         out = self._grubby("--info", index)
-        info = dict()
+        info = dict((f, None) for f in GrubbyEntry._fields)
         for line in out.split("\n"):
             k, eq, val = line.partition('=')
             if k and val:
