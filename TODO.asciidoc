@@ -21,6 +21,11 @@ Migration::
   ** e.g. Migrate /dev/XXX to UUID=XXX in /etc/fstab
   *** See https://bugzilla.redhat.com/show_bug.cgi?id=895805
 
+Legacy systems::
+  * Backport to Python 2.6
+  ** argparse not in standard lib
+  * Backport to upstart
+
 Updates::
   * Figure out updates.img format
   * Look for updates.img
